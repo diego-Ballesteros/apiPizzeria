@@ -35,7 +35,7 @@ public class OrderController {
     public ResponseEntity<List<OrderEntity>> getOutSideOrders(){
         return ResponseEntity.ok(this.orderService.getOutSideOrders());
     }
-    @GetMapping("onside")
+    @GetMapping("/onside")
     public ResponseEntity<List<OrderEntity>> getOnSideOrders(){
         return ResponseEntity.ok(this.orderService.getOnSideOrders());
     }

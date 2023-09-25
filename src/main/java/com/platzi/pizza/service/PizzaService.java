@@ -3,6 +3,8 @@ package com.platzi.pizza.service;
 import com.platzi.pizza.persistence.entity.PizzaEntity;
 import com.platzi.pizza.persistence.repository.PizzaPagSortRepository;
 import com.platzi.pizza.persistence.repository.PizzaRepository;
+import com.platzi.pizza.service.DTO.UpdatePizzaPriceDto;
+import com.platzi.pizza.service.exception.EmailException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -10,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -76,5 +79,16 @@ public class PizzaService {
 
     public boolean existsPizza(int idPizza){
         return this.pizzaRepository.existsById(idPizza);
+    }
+
+    @Transactional(noRollbackFor = EmailException.class)
+    // si ocurre esta excepcion ignorara el rollBack si ocurre alguna otra si lo hara
+    public void updatePrice(UpdatePizzaPriceDto pizzaDto){
+        this.pizzaRepository.updatePrice(pizzaDto);
+        this.sendEmail();
+    }
+
+    private void sendEmail (){
+        throw new EmailException("email no enviado");
     }
 }
