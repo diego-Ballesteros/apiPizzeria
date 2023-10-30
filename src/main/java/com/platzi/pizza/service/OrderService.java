@@ -4,6 +4,7 @@ import com.platzi.pizza.persistence.entity.OrderEntity;
 import com.platzi.pizza.persistence.projection.OrderSummary;
 import com.platzi.pizza.persistence.repository.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -44,6 +45,7 @@ public class OrderService {
         return this.orderRepository.findAllByMethod(ON_SITE);
     }
 
+    @Secured("ROLE_ADMIN") // solo admin podra acceder a este servicio
     public  List<OrderEntity> getCustomerOrders(int idCustomer){
         return this.orderRepository.findCustomerOrders(idCustomer);
     }

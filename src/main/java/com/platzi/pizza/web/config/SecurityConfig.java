@@ -3,16 +3,16 @@ package com.platzi.pizza.web.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
+@EnableMethodSecurity(securedEnabled = true)
 public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -20,6 +20,8 @@ public class SecurityConfig {
                 .csrf().disable()
                 .cors().and() // para permitir recurrir a servicios desde otra fuente o puerto
                 .authorizeHttpRequests()
+                .requestMatchers("api/auth/**").permitAll()
+                .requestMatchers("/api/customers/**").hasAnyRole("ADMIN", "CUSTOMER")
                 // denegar o prtmitir accerso a endpoins
                 .requestMatchers(HttpMethod.GET, "/api/pizzas/**").hasAnyRole("ADMIN", "CUSTOMER")
                 .requestMatchers(HttpMethod.POST, "/api/pizzas/**").hasRole("ADMIN")
@@ -33,6 +35,11 @@ public class SecurityConfig {
                 .httpBasic();
 
         return http.build();
+    }
+
+    @Bean
+    public AuthenticationManager  authenticationManager(AuthenticationConfiguration configuration) throws Exception {
+        return configuration.getAuthenticationManager();
     }
 
     /* crear usuarios en memoria
